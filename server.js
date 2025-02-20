@@ -14,15 +14,28 @@ app.get('/', (req, res) => {
     <html>
       <body>
         <h1>Enter Text for Image</h1>
-        <form action="/img" method="get">
-          <input type="text" name="text" placeholder="Enter text here" required>
-          <button type="submit">Download Image</button>
+        <form id="textForm">
+          <input type="text" id="textInput" name="text" placeholder="Enter text here" required>
+          <button type="submit">Update Image</button>
         </form>
-        <img src='https://puzzle-veil-joggers.glitch.me/img?text=TEENAGE+MUTANT+NINJA+TURTLES'></img>
+        <img id="textImage" src="https://puzzle-veil-joggers.glitch.me/img?text=" alt="Generated Image">
+        
+        <script>
+          document.getElementById('textForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent form from submitting normally
+            
+            const text = document.getElementById('textInput').value;
+            const imageUrl = 'https://puzzle-veil-joggers.glitch.me/img?text=' + encodeURIComponent(text);
+            
+            // Update the image source
+            document.getElementById('textImage').src = imageUrl;
+          });
+        </script>
       </body>
     </html>
   `);
 });
+
 
 // Skew Letters Function (for the top 3 words)
 function skewLetters(ctx, text, x, y, startAngle, endAngle, letterSpacing = 1, wordSpacing = 10) {
@@ -71,8 +84,6 @@ function rotateLetters(ctx, text, centerX, centerY, startAngle, endAngle, radius
         }
 
         ctx.fillText(letters[i], 0, 0);
-        ctx.strokeStyle = 'black';
-        ctx.lineWidth = 4;
         ctx.strokeText(letters[i], 0, 0);
         ctx.restore();
     }
@@ -89,6 +100,11 @@ app.get('/img', (req, res) => {
     const canvas = createCanvas(800, 600);
     const ctx = canvas.getContext('2d');
 
+    // Calculate trapezoid width based on the number of letters in the first 3 words
+    const baseWidth = 28; // Width per letter
+    const numLettersTopWords = topWords.replace(/\s+/g, '').length; // Remove spaces
+    const trapezoidWidth = baseWidth * numLettersTopWords;
+
     // Background
     ctx.fillStyle = 'white';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -98,13 +114,14 @@ app.get('/img', (req, res) => {
     ctx.lineWidth = 6;
     ctx.beginPath();
     ctx.moveTo(130, 150);
-    ctx.lineTo(625, 150);
-    ctx.lineTo(590, 200);
-    ctx.lineTo(165, 200);
+    ctx.lineTo(145 + trapezoidWidth, 150); // Adjust the top width
+    ctx.lineTo(145 + trapezoidWidth - 35, 200); // Adjust the bottom width based on trapezoidWidth
+    ctx.lineTo(165, 200); // Bottom left corner
     ctx.closePath();
     ctx.fill();
     ctx.strokeStyle = 'black';
     ctx.stroke();
+
 
     // Skewed Top Words
     ctx.fillStyle = 'white'; // Sets text color
@@ -120,7 +137,10 @@ app.get('/img', (req, res) => {
    //  rotateLetters(text, startAngle, endAngle, makeArc
     // rotateLetters(turtles, -30, 30, true)
     ctx.font = '135px Turtles';
-    rotateLetters(ctx, bottomWord, 250, 235, -30, 30, 270, true);
+    ctx.strokeStyle = 'black';
+    ctx.lineWidth = 5;
+  
+    rotateLetters(ctx, bottomWord, trapezoidWidth-220, 235, -30, 30, 270, true);
 
     res.setHeader('Content-Type', 'image/png');
     canvas.pngStream().pipe(res);
