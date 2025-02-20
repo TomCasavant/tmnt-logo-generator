@@ -1,7 +1,9 @@
 const express = require('express');
-const { createCanvas } = require('canvas');
+const { createCanvas, loadImage, registerFont } = require('canvas');
 const path = require('path');
 const app = express();
+
+registerFont('Turtles-zOzL.ttf', { family: 'Turtles' });
 
 // Set up basic Express static file serving for the front-end (optional)
 app.use(express.static(path.join(__dirname, 'public')));
@@ -96,8 +98,8 @@ app.get('/img', (req, res) => {
     ctx.stroke();
 
     // Skewed Top Words
-    ctx.fillStyle = 'green';
-    ctx.font = '40px Arial';
+    ctx.fillStyle = 'white';
+    ctx.font = '40px Turtles';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     skewLetters(ctx, topWords, canvas.width / 2 - 300, 180, -10, 10);
