@@ -96,6 +96,7 @@ app.get('/img', (req, res) => {
 
     const topWords = words.slice(0, 3).join(' '); // First three words
     const bottomWord = words.slice(3).join(' '); // Remaining words
+
   
     // Calculate letter count for words
     const numLettersTopWords = topWords.replace(/\s+/g, '').length; // Remove spaces for count
@@ -109,11 +110,21 @@ app.get('/img', (req, res) => {
     // Choose the larger width
     const width = Math.max(widthTopWords, widthBottomWords);
 
+    const canvasMeas = createCanvas(width, 200);
+    const ctxMeas = canvasMeas.getContext('2d');
+    ctxMeas.font = 'bold 30px Futura, Helvetica, Verdana, sans-serif'
+    const topWidth = ctxMeas.measureText(topWords).width;
+    ctxMeas.font = '125px Turtles';
+    const bottomWidth = ctxMeas.measureText(bottomWord).width;
+  
     const canvas = createCanvas(width, 200);
     const ctx = canvas.getContext('2d');
+    
+    ctx.fillText(topWidth, 50, 50);
+    ctx.fillText(bottomWidth, 50, 90);
 
     // Trapezoid width and position
-    const trapezoidWidth = baseWidth * numLettersTopWords;
+    /*const trapezoidWidth = baseWidth * numLettersTopWords;
     const trapezoidStart = 60 + ((bottomLettersLength - 7) * 30);  // Adjust for bottom word length
     const trapezoidEnd = 30 + trapezoidWidth + ((bottomLettersLength - 7) * 36); // Adjust for bottom word length
 
@@ -147,7 +158,7 @@ app.get('/img', (req, res) => {
     ctx.strokeStyle = 'black';
     ctx.lineWidth = 5;
     rotateLetters(ctx, bottomWord, trapezoidStart + trapezoidWidth / 3.5 - 15, 94, -30, 30, 270, true);
-
+    */
     res.setHeader('Content-Type', 'image/png');
     canvas.pngStream().pipe(res);
 });
