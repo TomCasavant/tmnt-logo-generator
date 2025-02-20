@@ -58,7 +58,7 @@ function rotateLetters(ctx, text, centerX, centerY, startAngle, endAngle, radius
         const radian = angle * Math.PI / 180;
 
         // Calculate letter position based on circular path
-        const letterX = centerX + radius * Math.sin(radian) + 48*i;
+        const letterX = centerX + radius * Math.sin(radian) + 43*i;
         const letterY = centerY - (makeArc ? -1 * radius * (1 - Math.cos(radian)) : 0);
 
         ctx.save();
@@ -71,13 +71,16 @@ function rotateLetters(ctx, text, centerX, centerY, startAngle, endAngle, radius
         }
 
         ctx.fillText(letters[i], 0, 0);
+        ctx.strokeStyle = 'black';
+        ctx.lineWidth = 4;
+        ctx.strokeText(letters[i], 0, 0);
         ctx.restore();
     }
 }
 
 // Endpoint to generate the canvas image with effects
 app.get('/img', (req, res) => {
-    const text = req.query.text || 'No Text Provided';
+    const text = req.query.text.toUpperCase() || 'TEENAGE MUTANT NINJA TURTLES';
     const words = text.split(' ');
 
     const topWords = words.slice(0, 3).join(' '); // First three words
@@ -91,7 +94,7 @@ app.get('/img', (req, res) => {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     // Trapezoid
-    ctx.fillStyle = 'red';
+    ctx.fillStyle = '#ED1C24';
     ctx.lineWidth = 6;
     ctx.beginPath();
     ctx.moveTo(130, 150);
@@ -112,12 +115,12 @@ app.get('/img', (req, res) => {
     skewLetters(ctx, topWords, 175, 176, 35, -35, 22, 15);
 
     // Rotated Bottom Word
-    ctx.fillStyle = 'green';
+    ctx.fillStyle = '#8FD129';
     //(ctx, text, centerX, centerY, startAngle, endAngle, radius)
    //  rotateLetters(text, startAngle, endAngle, makeArc
     // rotateLetters(turtles, -30, 30, true)
-    ctx.font = '120px Turtles';
-    rotateLetters(ctx, bottomWord, 200, 250, -30, 30, 270, true);
+    ctx.font = '135px Turtles';
+    rotateLetters(ctx, bottomWord, 250, 235, -30, 30, 270, true);
 
     res.setHeader('Content-Type', 'image/png');
     canvas.pngStream().pipe(res);
