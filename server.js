@@ -96,14 +96,28 @@ app.get('/img', (req, res) => {
 
     const topWords = words.slice(0, 3).join(' '); // First three words
     const bottomWord = words.slice(3).join(' '); // Last word
+  
+    let numLettersTopWords = topWords.length; // Remove spaces
+    const bottomLettersLength = bottomWord.length;
 
-    const canvas = createCanvas(650, 200);
+    const widthTopWords = 32.5 * numLettersTopWords; // Calculate width based on top words
+    const widthBottomWords = 75 * bottomLettersLength; // Calculate width based on bottom words
+
+    // Choose the larger value
+    const width = Math.max(widthTopWords, widthBottomWords);
+
+    
+    const canvas = createCanvas(width, 200);
     const ctx = canvas.getContext('2d');
+  
+    numLettersTopWords = topWords.replace(/\s+/g, '').length; // Remove spaces
 
     // Calculate trapezoid width based on the number of letters in the first 3 words
     const baseWidth = 28; // Width per letter
-    const numLettersTopWords = topWords.replace(/\s+/g, '').length; // Remove spaces
+    
     const trapezoidWidth = baseWidth * numLettersTopWords;
+    const trapezoidStart = width/4
+    const trapezoidEnd = width - 20
 
     // Background
     ctx.fillStyle = 'transparent';
@@ -113,10 +127,10 @@ app.get('/img', (req, res) => {
     ctx.fillStyle = '#ED1C24';
     ctx.lineWidth = 6;
     ctx.beginPath();
-    ctx.moveTo(40, 10);
-    ctx.lineTo(35 + trapezoidWidth, 10); // Adjust the top width
-    ctx.lineTo(35 + trapezoidWidth - 35, 60); // Adjust the bottom width based on trapezoidWidth
-    ctx.lineTo(75, 60); // Bottom left corner
+    ctx.moveTo(trapezoidStart + 40, 10);
+    ctx.lineTo(trapezoidEnd, 10); // Adjust the top width
+    ctx.lineTo(trapezoidEnd - 35, 60); // Adjust the bottom width based on trapezoidWidth
+    ctx.lineTo(trapezoidStart + 75, 60); // Bottom left corner
     ctx.closePath();
     ctx.fill();
     ctx.strokeStyle = 'black';
