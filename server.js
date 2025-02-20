@@ -92,6 +92,7 @@ function rotateLetters(ctx, text, centerX, centerY, startAngle, endAngle, radius
 // Endpoint to generate the canvas image with effects
 app.get('/img', (req, res) => {
     const text = req.query.text.toUpperCase() || 'TEENAGE MUTANT NINJA TURTLES';
+    const background = req.query.background || 'transparent'
     const words = text.split(' ');
 
     const topWords = words.slice(0, 3).join(' '); // First three words
@@ -117,15 +118,15 @@ app.get('/img', (req, res) => {
     ctxMeas.font = '125px Turtles';
     const bottomWidth = ctxMeas.measureText(bottomWord).width + 2.3*bottomLettersLength;
   
-    const canvas = createCanvas(bottomWidth, 200);
+    const canvas = createCanvas(bottomWidth, 200 + bottomLettersLength*1.5);
     const ctx = canvas.getContext('2d');
     
     // Trapezoid width and position
-    const trapezoidWidth = topWidth+65;
+    const trapezoidWidth = topWidth+65+ 5 * (numLettersTopWords/bottomLettersLength);
     const trapezoidStart = bottomWidth/2 - trapezoidWidth/2//0 + (ctxMeas.measureText(bottomWord).width-topWidth*1.05)/4  // Adjust for bottom word length
     const trapezoidEnd = bottomWidth/2 + trapezoidWidth/2; // Adjust for bottom word length
     // Background
-    ctx.fillStyle = 'transparent';
+    ctx.fillStyle = background;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     // Trapezoid
@@ -153,7 +154,7 @@ app.get('/img', (req, res) => {
     ctx.font = '125px Turtles';
     ctx.strokeStyle = 'black';
     ctx.lineWidth = 5;
-    rotateLetters(ctx, bottomWord, bottomWidth/3, 94, -4*bottomLettersLength, 4*bottomLettersLength, 200 + 5*bottomLettersLength, true);
+    rotateLetters(ctx, bottomWord, bottomWidth/3.2, 94, -4*bottomLettersLength, 4*bottomLettersLength, 200 + 5*bottomLettersLength, true);
     
     res.setHeader('Content-Type', 'image/png');
     canvas.pngStream().pipe(res);
