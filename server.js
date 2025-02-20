@@ -40,20 +40,28 @@ function skewLetters(ctx, text, x, y, startAngle, endAngle) {
 }
 
 // Rotate Letters Function (for the bottom word)
-function rotateLetters(ctx, text, centerX, centerY, startAngle, endAngle, radius) {
+function rotateLetters(ctx, text, centerX, centerY, startAngle, endAngle, radius, makeArc) {
     const letters = text.split('');
     const totalLetters = letters.length;
 
     for (let i = 0; i < totalLetters; i++) {
+        // Interpolate angle for each letter
         const angle = (totalLetters === 1) ? 0 : startAngle + (i * (endAngle - startAngle) / (totalLetters - 1));
         const radian = angle * Math.PI / 180;
 
+        // Calculate letter position based on circular path
         const letterX = centerX + radius * Math.sin(radian);
-        const letterY = centerY - radius * (1 - Math.cos(radian));
+        const letterY = centerY - (makeArc ? radius * (1 - Math.cos(radian)) : 0);
 
         ctx.save();
         ctx.translate(letterX, letterY);
-        ctx.rotate(radian); // Rotate around its own position
+        ctx.rotate(radian); // Rotate letter around its own position
+
+        // Adjust width for spaces (mimicking original logic)
+        if (letters[i] === ' ') {
+            ctx.translate(8, 0); // Offset to simulate space width
+        }
+
         ctx.fillText(letters[i], 0, 0);
         ctx.restore();
     }
@@ -99,7 +107,7 @@ app.get('/img', (req, res) => {
     //(ctx, text, centerX, centerY, startAngle, endAngle, radius)
    //  rotateLetters(text, startAngle, endAngle, makeArc
     // rotateLetters(turtles, -30, 30, true)
-    rotateLetters(ctx, bottomWord, canvas.width / 2, canvas.height - 335, -30, 30, 50);
+    rotateLetters(ctx, bottomWord, canvas.width / 2, canvas.height - 335, -30, 30, 50, true);
 
     res.setHeader('Content-Type', 'image/png');
     canvas.pngStream().pipe(res);
