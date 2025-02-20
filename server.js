@@ -120,13 +120,13 @@ app.get('/img', (req, res) => {
     const canvas = createCanvas(bottomWidth, 200);
     const ctx = canvas.getContext('2d');
     
-    ctx.fillText(topWidth, 50, 50);
+    ctx.fillText(ctxMeas.measureText(bottomWord).width-topWidth, 50, 50);
     ctx.fillText(bottomWidth, 50, 90);
 
     // Trapezoid width and position
     const trapezoidWidth = topWidth;
-    const trapezoidStart = (bottomWidth - trapezoidWidth)/2  // Adjust for bottom word length
-    const trapezoidEnd = 30 + trapezoidWidth + ((bottomLettersLength - 7) * 36); // Adjust for bottom word length
+    const trapezoidStart = 0 + (ctxMeas.measureText(bottomWord).width-topWidth)/2  // Adjust for bottom word length
+    const trapezoidEnd = bottomWidth - 10; // Adjust for bottom word length
 
     // Background
     ctx.fillStyle = 'transparent';
