@@ -13,7 +13,9 @@ app.get('/', (req, res) => {
   res.send(`
     <html>
       <body>
-        <h1>Enter Text for Image</h1>
+        <h1>TMNT PNG Logo Generator</h1>
+        <p><a href='https://xkcd.com/1412/'>XKCD 1412</a></p>
+        <p> Based on <a href='http://glench.com/tmnt'>http://glench.com/tmnt</a></p>
         <form id="textForm">
           <input type="text" id="textInput" name="text" placeholder="Enter text here" required>
           <button type="submit">Update Image</button>
@@ -100,18 +102,10 @@ app.get('/img', (req, res) => {
 
   
     // Calculate letter count for words
-    const numLettersTopWords = topWords.length; // Remove spaces for count
-    const bottomLettersLength = bottomWord.replace(/\s+/g, '').length; // Remove spaces for bottom word
+    const topLettersLength = topWords.length; // Remove spaces for count
+    const bottomLettersLength = bottomWord.length; // Remove spaces for bottom word
 
-    // Calculate widths based on letter counts
-    const baseWidth = 30;
-    const widthTopWords = baseWidth * numLettersTopWords;
-    const widthBottomWords = 86 * bottomLettersLength;
-
-    // Choose the larger width
-    const width = Math.max(widthTopWords, widthBottomWords);
-
-    const canvasMeas = createCanvas(width, 200);
+    const canvasMeas = createCanvas(200, 200);
     const ctxMeas = canvasMeas.getContext('2d');
     ctxMeas.font = 'bold 30px Futura, Helvetica, Verdana, sans-serif'
     const topWidth = ctxMeas.measureText(topWords).width;
@@ -122,7 +116,7 @@ app.get('/img', (req, res) => {
     const ctx = canvas.getContext('2d');
     
     // Trapezoid width and position
-    const trapezoidWidth = topWidth+65+ 5 * (numLettersTopWords/bottomLettersLength);
+    const trapezoidWidth = topWidth+65+ 5 * (topLettersLength/bottomLettersLength);
     const trapezoidStart = bottomWidth/2 - trapezoidWidth/2//0 + (ctxMeas.measureText(bottomWord).width-topWidth*1.05)/4  // Adjust for bottom word length
     const trapezoidEnd = bottomWidth/2 + trapezoidWidth/2; // Adjust for bottom word length
     // Background
