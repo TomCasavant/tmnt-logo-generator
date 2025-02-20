@@ -47,12 +47,11 @@ function skewLetters(ctx, text, x, y, startAngle, endAngle, letterSpacing = 1, w
     let currentX = x; // Start position
 
     for (let i = 0; i < totalLetters; i++) {
-        // Interpolate angle
         let angle = (i === totalLetters - 1) ? endAngle : startAngle + (i * (endAngle - startAngle) / totalLetters);
-        if (letters[i] === ' ') angle = 0; // No skew for spaces
+        if (letters[i] === ' ') angle = 0;
 
         ctx.save();
-        ctx.translate(currentX, y); // Move to the correct position
+        ctx.translate(currentX, y);
         ctx.transform(1, 0, Math.tan(angle * Math.PI / 180), 1, 0, 0); // Apply skew transformation
         ctx.fillText(letters[i], 0, 0);
         ctx.restore();
@@ -68,7 +67,6 @@ function rotateLetters(ctx, text, centerX, centerY, startAngle, endAngle, radius
     const totalLetters = letters.length;
 
     for (let i = 0; i < totalLetters; i++) {
-        // Interpolate angle for each letter
         const angle = (totalLetters === 1) ? 0 : startAngle + (i * (endAngle - startAngle) / (totalLetters - 1));
         const radian = angle * Math.PI / 180;
 
@@ -80,9 +78,8 @@ function rotateLetters(ctx, text, centerX, centerY, startAngle, endAngle, radius
         ctx.translate(letterX, letterY);
         ctx.rotate(radian); // Rotate letter around its own position
 
-        // Adjust width for spaces (mimicking original logic)
         if (letters[i] === ' ') {
-            ctx.translate(8, 0); // Offset to simulate space width
+            ctx.translate(8, 0);
         }
 
         ctx.fillText(letters[i], 0, 0);
@@ -101,9 +98,8 @@ app.get('/img', (req, res) => {
     const bottomWord = words.slice(3).join(' '); // Remaining words
 
   
-    // Calculate letter count for words
-    const topLettersLength = topWords.length; // Remove spaces for count
-    const bottomLettersLength = bottomWord.length; // Remove spaces for bottom word
+    const topLettersLength = topWords.length;
+    const bottomLettersLength = bottomWord.length;
 
     const canvasMeas = createCanvas(200, 200);
     const ctxMeas = canvasMeas.getContext('2d');
@@ -119,7 +115,7 @@ app.get('/img', (req, res) => {
     const trapezoidWidth = topWidth+65+ 5 * (topLettersLength/bottomLettersLength);
     const trapezoidStart = bottomWidth/2 - trapezoidWidth/2//0 + (ctxMeas.measureText(bottomWord).width-topWidth*1.05)/4  // Adjust for bottom word length
     const trapezoidEnd = bottomWidth/2 + trapezoidWidth/2; // Adjust for bottom word length
-    // Background
+
     ctx.fillStyle = background;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
