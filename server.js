@@ -20,14 +20,14 @@ app.get('/', (req, res) => {
           <input type="text" id="textInput" name="text" placeholder="Enter text here" required>
           <button type="submit">Update Image</button>
         </form>
-        <img id="textImage" src="https://puzzle-veil-joggers.glitch.me/img?text=" alt="Generated Image">
+        <img id="textImage" src="https://tmnt-logo.glitch.me/img?text=" alt="TMNT Logo">
         
         <script>
           document.getElementById('textForm').addEventListener('submit', function(event) {
             event.preventDefault(); // Prevent form from submitting normally
             
             const text = document.getElementById('textInput').value;
-            const imageUrl = 'https://puzzle-veil-joggers.glitch.me/img?text=' + encodeURIComponent(text);
+            const imageUrl = 'https://tmnt-logo.glitch.me/img?text=' + encodeURIComponent(text);
             
             // Update the image source
             document.getElementById('textImage').src = imageUrl;
@@ -108,7 +108,9 @@ app.get('/img', (req, res) => {
     ctxMeas.font = '125px Turtles';
     const bottomWidth = ctxMeas.measureText(bottomWord).width + 2.3*bottomLettersLength;
   
-    const canvas = createCanvas(bottomWidth, 200 + bottomLettersLength*1.5);
+    const height = req.query.height ? parseInt(req.query.height, 10) : 200 + bottomLettersLength * 1.5;
+    const width = req.query.width ? parseInt(req.query.width, 10) : bottomWidth;
+    const canvas = createCanvas(width, height);
     const ctx = canvas.getContext('2d');
     
     // Trapezoid width and position
