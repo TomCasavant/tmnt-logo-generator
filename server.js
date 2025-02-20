@@ -16,7 +16,7 @@ app.get('/', (req, res) => {
           <input type="text" name="text" placeholder="Enter text here" required>
           <button type="submit">Download Image</button>
         </form>
-        <img src='https://puzzle-veil-joggers.glitch.me/img?text=teenage+mutant+ninja+turtles'></img>
+        <img src='https://puzzle-veil-joggers.glitch.me/img?text=TEENAGE+MUTANT+NINJA+TURTLES'></img>
       </body>
     </html>
   `);
@@ -78,25 +78,28 @@ app.get('/img', (req, res) => {
     ctx.fillStyle = 'red';
     ctx.lineWidth = 8;
     ctx.beginPath();
-    ctx.moveTo(150, 150);
-    ctx.lineTo(650, 150);
-    ctx.lineTo(700, 400);
-    ctx.lineTo(100, 400);
+    ctx.moveTo(100, 150);
+    ctx.lineTo(700, 150);
+    ctx.lineTo(650, 200);
+    ctx.lineTo(150, 200);
     ctx.closePath();
     ctx.fill();
     ctx.strokeStyle = 'black';
     ctx.stroke();
 
     // Skewed Top Words
-    ctx.fillStyle = 'white';
+    ctx.fillStyle = 'green';
     ctx.font = '40px Arial';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    skewLetters(ctx, topWords, canvas.width / 2 - 100, 230, -10, 10);
+    skewLetters(ctx, topWords, canvas.width / 2 - 300, 180, -10, 10);
 
     // Rotated Bottom Word
     ctx.fillStyle = 'green';
-    rotateLetters(ctx, bottomWord, canvas.width / 2, canvas.height - 100, -20, 20, 50);
+    //(ctx, text, centerX, centerY, startAngle, endAngle, radius)
+   //  rotateLetters(text, startAngle, endAngle, makeArc
+    // rotateLetters(turtles, -30, 30, true)
+    rotateLetters(ctx, bottomWord, canvas.width / 2, canvas.height - 335, -30, 30, 50);
 
     res.setHeader('Content-Type', 'image/png');
     canvas.pngStream().pipe(res);
