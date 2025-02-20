@@ -6,7 +6,7 @@ const app = express();
 const port = 3000;
 
 // Register the custom Turtles font
-registerFont(path.join(__dirname, 'Turtles.ttf'), { family: 'Turtles' });
+//registerFont(path.join(__dirname, 'Turtles.ttf'), { family: 'Turtles' });
 
 // Serve static files like images or the font
 app.use(express.static(path.join(__dirname, 'public')));
