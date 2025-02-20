@@ -58,8 +58,8 @@ function rotateLetters(ctx, text, centerX, centerY, startAngle, endAngle, radius
         const radian = angle * Math.PI / 180;
 
         // Calculate letter position based on circular path
-        const letterX = centerX + radius * Math.sin(radian);
-        const letterY = centerY - (makeArc ? radius * (1 - Math.cos(radian)) : 0);
+        const letterX = centerX + radius * Math.sin(radian) + 48*i;
+        const letterY = centerY - (makeArc ? -1 * radius * (1 - Math.cos(radian)) : 0);
 
         ctx.save();
         ctx.translate(letterX, letterY);
@@ -92,12 +92,12 @@ app.get('/img', (req, res) => {
 
     // Trapezoid
     ctx.fillStyle = 'red';
-    ctx.lineWidth = 8;
+    ctx.lineWidth = 6;
     ctx.beginPath();
-    ctx.moveTo(100, 150);
-    ctx.lineTo(700, 150);
-    ctx.lineTo(650, 200);
-    ctx.lineTo(150, 200);
+    ctx.moveTo(130, 150);
+    ctx.lineTo(625, 150);
+    ctx.lineTo(590, 200);
+    ctx.lineTo(165, 200);
     ctx.closePath();
     ctx.fill();
     ctx.strokeStyle = 'black';
@@ -109,15 +109,15 @@ app.get('/img', (req, res) => {
     ctx.textAlign = 'center'; // Centers text horizontally
     ctx.textBaseline = 'middle'; // Centers text vertically
 
-    skewLetters(ctx, topWords, canvas.width / 2 - 225, 178, 35, -35, 22, 15);
+    skewLetters(ctx, topWords, 175, 176, 35, -35, 22, 15);
 
     // Rotated Bottom Word
     ctx.fillStyle = 'green';
     //(ctx, text, centerX, centerY, startAngle, endAngle, radius)
    //  rotateLetters(text, startAngle, endAngle, makeArc
     // rotateLetters(turtles, -30, 30, true)
-    ctx.font = '50px Turtles';
-    rotateLetters(ctx, bottomWord, canvas.width / 2, canvas.height - 335, -30, 30, 50, true);
+    ctx.font = '120px Turtles';
+    rotateLetters(ctx, bottomWord, 200, 250, -30, 30, 270, true);
 
     res.setHeader('Content-Type', 'image/png');
     canvas.pngStream().pipe(res);
