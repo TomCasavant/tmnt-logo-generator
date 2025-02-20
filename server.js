@@ -117,16 +117,17 @@ app.get('/img', (req, res) => {
     ctxMeas.font = '125px Turtles';
     const bottomWidth = ctxMeas.measureText(bottomWord).width + 3*bottomLettersLength;
   
-    const canvas = createCanvas(bottomWidth, 200);
+    const canvas = createCanvas(bottomWidth, 900);
     const ctx = canvas.getContext('2d');
     
-    ctx.fillText(ctxMeas.measureText(bottomWord).width-topWidth, 50, 50);
-    ctx.fillText(bottomWidth, 50, 90);
+  ctx.fillText(`${bottomWidth} ${topWidth} ${ctxMeas.measureText(bottomWord).width}`, 50, 250);
+    ctx.fillText((ctxMeas.measureText(bottomWord).width-topWidth)/4, 50, 300);
+    ctx.fillText(((ctxMeas.measureText(bottomWord).width-topWidth)/4) + topWidth, 50, 350);
 
     // Trapezoid width and position
     const trapezoidWidth = topWidth;
-    const trapezoidStart = 0 + (ctxMeas.measureText(bottomWord).width-topWidth)/2  // Adjust for bottom word length
-    const trapezoidEnd = bottomWidth - 10; // Adjust for bottom word length
+    const trapezoidStart = 0 + (ctxMeas.measureText(bottomWord).width-topWidth)/4  // Adjust for bottom word length
+    const trapezoidEnd = 530; // Adjust for bottom word length
 
     // Background
     ctx.fillStyle = 'transparent';
