@@ -24,7 +24,7 @@ app.get('/', (req, res) => {
         
         <script>
           document.getElementById('textForm').addEventListener('submit', function(event) {
-            event.preventDefault(); // Prevent form from submitting normally
+            event.preventDefault();
             
             const text = document.getElementById('textInput').value;
             const imageUrl = 'https://tmnt-logo.glitch.me/img?text=' + encodeURIComponent(text);
