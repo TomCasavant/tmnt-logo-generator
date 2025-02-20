@@ -61,7 +61,7 @@ function skewLetters(ctx, text, x, y, startAngle, endAngle, letterSpacing = 1, w
 }
 
 // Rotate Letters Function (for the bottom word)
-function rotateLetters(ctx, text, centerX, centerY, startAngle, endAngle, radius, makeArc) {
+function rotateLetters(ctx, text, centerX, centerY, startAngle, endAngle, radius, makeArc, letter_spacing=35) {
     const letters = text.split('');
     const totalLetters = letters.length;
 
@@ -71,7 +71,7 @@ function rotateLetters(ctx, text, centerX, centerY, startAngle, endAngle, radius
         const radian = angle * Math.PI / 180;
 
         // Calculate letter position based on circular path
-        const letterX = centerX + radius * Math.sin(radian) + 35*i;
+        const letterX = centerX + radius * Math.sin(radian) + letter_spacing**i;
         const letterY = centerY - (makeArc ? -1 * radius * (1 - Math.cos(radian)) : 0);
 
         ctx.save();
@@ -115,20 +115,17 @@ app.get('/img', (req, res) => {
     ctxMeas.font = 'bold 30px Futura, Helvetica, Verdana, sans-serif'
     const topWidth = ctxMeas.measureText(topWords).width;
     ctxMeas.font = '125px Turtles';
-    const bottomWidth = ctxMeas.measureText(bottomWord).width + 3*bottomLettersLength;
+    const bottomWidth = ctxMeas.measureText(bottomWord).width + 2.3*bottomLettersLength;
   
-    const canvas = createCanvas(bottomWidth, 900);
+    const canvas = createCanvas(bottomWidth, 275);
     const ctx = canvas.getContext('2d');
     
-  ctx.fillText(`${bottomWidth} ${topWidth} ${ctxMeas.measureText(bottomWord).width}`, 50, 250);
-    ctx.fillText((ctxMeas.measureText(bottomWord).width-topWidth)/4, 50, 300);
-    ctx.fillText(((ctxMeas.measureText(bottomWord).width-topWidth)/4) + topWidth, 50, 350);
-
+    ctx.fillText(`${bottomWidth} ${topWidth} ${ctxMeas.measureText(bottomWord).width}`, 50, 250);
+    
     // Trapezoid width and position
-    const trapezoidWidth = topWidth;
-    const trapezoidStart = 0 + (ctxMeas.measureText(bottomWord).width-topWidth)/4  // Adjust for bottom word length
-    const trapezoidEnd = 530; // Adjust for bottom word length
-
+    const trapezoidWidth = topWidth*1.05 + 79;
+    const trapezoidStart = 0 + (ctxMeas.measureText(bottomWord).width-topWidth*1.05)/4  // Adjust for bottom word length
+    const trapezoidEnd = trapezoidStart+trapezoidWidth; // Adjust for bottom word length
     // Background
     ctx.fillStyle = 'transparent';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -158,7 +155,7 @@ app.get('/img', (req, res) => {
     ctx.font = '125px Turtles';
     ctx.strokeStyle = 'black';
     ctx.lineWidth = 5;
-    rotateLetters(ctx, bottomWord, bottomWidth/(bottomLettersLength/2)+25, 94, -30, 30, 270, true);
+    rotateLetters(ctx, bottomWord, bottomWidth/3, 94, -30, 30, 270, true);
     
     res.setHeader('Content-Type', 'image/png');
     canvas.pngStream().pipe(res);
