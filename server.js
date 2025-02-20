@@ -25,19 +25,25 @@ app.get('/', (req, res) => {
 });
 
 // Skew Letters Function (for the top 3 words)
-function skewLetters(ctx, text, x, y, startAngle, endAngle) {
+function skewLetters(ctx, text, x, y, startAngle, endAngle, letterSpacing = 1, wordSpacing = 10) {
     const letters = text.split('');
     const totalLetters = letters.length;
 
+    let currentX = x; // Start position
+
     for (let i = 0; i < totalLetters; i++) {
+        // Interpolate angle
         let angle = (i === totalLetters - 1) ? endAngle : startAngle + (i * (endAngle - startAngle) / totalLetters);
         if (letters[i] === ' ') angle = 0; // No skew for spaces
 
         ctx.save();
-        ctx.translate(x + i * 30, y); // Adjust spacing
-        ctx.transform(1, Math.tan(angle * Math.PI / 180), 0, 1, 0, 0); // Skew transformation
+        ctx.translate(currentX, y); // Move to the correct position
+        ctx.transform(1, 0, Math.tan(angle * Math.PI / 180), 1, 0, 0); // Apply skew transformation
         ctx.fillText(letters[i], 0, 0);
         ctx.restore();
+
+        // Adjust spacing dynamically
+        currentX += (letters[i] === ' ') ? wordSpacing : letterSpacing;
     }
 }
 
@@ -98,17 +104,19 @@ app.get('/img', (req, res) => {
     ctx.stroke();
 
     // Skewed Top Words
-    ctx.fillStyle = 'white';
-    ctx.font = '40px Turtles';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    skewLetters(ctx, topWords, canvas.width / 2 - 300, 180, -10, 10);
+    ctx.fillStyle = 'white'; // Sets text color
+    ctx.font = 'bold 30px Futura, Helvetica, Verdana, sans-serif'; // Font size, weight, and family
+    ctx.textAlign = 'center'; // Centers text horizontally
+    ctx.textBaseline = 'middle'; // Centers text vertically
+
+    skewLetters(ctx, topWords, canvas.width / 2 - 225, 178, 35, -35, 22, 15);
 
     // Rotated Bottom Word
     ctx.fillStyle = 'green';
     //(ctx, text, centerX, centerY, startAngle, endAngle, radius)
    //  rotateLetters(text, startAngle, endAngle, makeArc
     // rotateLetters(turtles, -30, 30, true)
+    ctx.font = '50px Turtles';
     rotateLetters(ctx, bottomWord, canvas.width / 2, canvas.height - 335, -30, 30, 50, true);
 
     res.setHeader('Content-Type', 'image/png');
