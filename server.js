@@ -113,11 +113,11 @@ app.get('/img', (req, res) => {
     numLettersTopWords = topWords.replace(/\s+/g, '').length; // Remove spaces
 
     // Calculate trapezoid width based on the number of letters in the first 3 words
-    const baseWidth = 28; // Width per letter
+    const baseWidth = 30; // Width per letter
     
     const trapezoidWidth = baseWidth * numLettersTopWords;
-    const trapezoidStart = width/4
-    const trapezoidEnd = width - 20
+    const trapezoidStart = 40 + ((bottomLettersLength-7) * 30)
+    const trapezoidEnd = trapezoidWidth + ((bottomLettersLength-7) * 36)
 
     // Background
     ctx.fillStyle = 'transparent';
@@ -127,10 +127,10 @@ app.get('/img', (req, res) => {
     ctx.fillStyle = '#ED1C24';
     ctx.lineWidth = 6;
     ctx.beginPath();
-    ctx.moveTo(trapezoidStart + 40, 10);
+    ctx.moveTo(trapezoidStart, 10);
     ctx.lineTo(trapezoidEnd, 10); // Adjust the top width
-    ctx.lineTo(trapezoidEnd - 35, 60); // Adjust the bottom width based on trapezoidWidth
-    ctx.lineTo(trapezoidStart + 75, 60); // Bottom left corner
+    ctx.lineTo(trapezoidEnd-35, 60); // Adjust the bottom width based on trapezoidWidth
+    ctx.lineTo(trapezoidStart+35, 60); // Bottom left corner
     ctx.closePath();
     ctx.fill();
     ctx.strokeStyle = 'black';
@@ -143,7 +143,7 @@ app.get('/img', (req, res) => {
     ctx.textAlign = 'center'; // Centers text horizontally
     ctx.textBaseline = 'middle'; // Centers text vertically
 
-    skewLetters(ctx, topWords, 85, 35, 35, -35, 22, 15);
+    skewLetters(ctx, topWords, trapezoidStart+45, 35, 35, -35, 22, 15);
 
     // Rotated Bottom Word
     ctx.fillStyle = '#8FD129';
@@ -154,7 +154,7 @@ app.get('/img', (req, res) => {
     ctx.strokeStyle = 'black';
     ctx.lineWidth = 5;
   
-    rotateLetters(ctx, bottomWord, trapezoidWidth-310, 94, -30, 30, 270, true);
+    rotateLetters(ctx, bottomWord, trapezoidStart+trapezoidWidth-370, 94, -30, 30, 270, true);
 
     res.setHeader('Content-Type', 'image/png');
     canvas.pngStream().pipe(res);
