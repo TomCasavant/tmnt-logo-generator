@@ -71,7 +71,7 @@ function rotateLetters(ctx, text, centerX, centerY, startAngle, endAngle, radius
         const radian = angle * Math.PI / 180;
 
         // Calculate letter position based on circular path
-        const letterX = centerX + radius * Math.sin(radian) + 43*i;
+        const letterX = centerX + radius * Math.sin(radian) + 35*i;
         const letterY = centerY - (makeArc ? -1 * radius * (1 - Math.cos(radian)) : 0);
 
         ctx.save();
@@ -97,7 +97,7 @@ app.get('/img', (req, res) => {
     const topWords = words.slice(0, 3).join(' '); // First three words
     const bottomWord = words.slice(3).join(' '); // Last word
 
-    const canvas = createCanvas(800, 600);
+    const canvas = createCanvas(800, 200);
     const ctx = canvas.getContext('2d');
 
     // Calculate trapezoid width based on the number of letters in the first 3 words
@@ -113,10 +113,10 @@ app.get('/img', (req, res) => {
     ctx.fillStyle = '#ED1C24';
     ctx.lineWidth = 6;
     ctx.beginPath();
-    ctx.moveTo(130, 150);
-    ctx.lineTo(145 + trapezoidWidth, 150); // Adjust the top width
-    ctx.lineTo(145 + trapezoidWidth - 35, 200); // Adjust the bottom width based on trapezoidWidth
-    ctx.lineTo(165, 200); // Bottom left corner
+    ctx.moveTo(20, 10);
+    ctx.lineTo(15 + trapezoidWidth, 10); // Adjust the top width
+    ctx.lineTo(15 + trapezoidWidth - 35, 60); // Adjust the bottom width based on trapezoidWidth
+    ctx.lineTo(35, 60); // Bottom left corner
     ctx.closePath();
     ctx.fill();
     ctx.strokeStyle = 'black';
@@ -129,18 +129,18 @@ app.get('/img', (req, res) => {
     ctx.textAlign = 'center'; // Centers text horizontally
     ctx.textBaseline = 'middle'; // Centers text vertically
 
-    skewLetters(ctx, topWords, 175, 176, 35, -35, 22, 15);
+    skewLetters(ctx, topWords, 65, 35, 35, -35, 22, 15);
 
     // Rotated Bottom Word
     ctx.fillStyle = '#8FD129';
     //(ctx, text, centerX, centerY, startAngle, endAngle, radius)
    //  rotateLetters(text, startAngle, endAngle, makeArc
     // rotateLetters(turtles, -30, 30, true)
-    ctx.font = '135px Turtles';
+    ctx.font = '125px Turtles';
     ctx.strokeStyle = 'black';
     ctx.lineWidth = 5;
   
-    rotateLetters(ctx, bottomWord, trapezoidWidth-220, 235, -30, 30, 270, true);
+    rotateLetters(ctx, bottomWord, trapezoidWidth-360, 94, -30, 30, 270, true);
 
     res.setHeader('Content-Type', 'image/png');
     canvas.pngStream().pipe(res);
