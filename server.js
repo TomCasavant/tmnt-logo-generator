@@ -1,54 +1,75 @@
-const path = require("path");
+const express = require('express');
+const { createCanvas, loadImage } = require('canvas');
+const jsdom = require('jsdom');
+const html2canvas = require('html2canvas');
 
-// Require the fastify framework and instantiate it
-const fastify = require("fastify")({
-  // set this to true for detailed logging:
-  logger: false,
-});
+const { JSDOM } = jsdom;
+const app = express();
+const PORT = process.env.PORT || 3000;
 
-// Setup our static files
-fastify.register(require("@fastify/static"), {
-  root: path.join(__dirname, "public"),
-  prefix: "/", // optional: default '/'
-});
+app.get('/img', async (req, res) => {
+    let nameParam = req.query.name || 'Teenage_Mutant_Ninja_Turtles';
+    
+    // Ensure exactly 4 words, fill missing ones with empty strings
+    let words = nameParam.split('_').slice(0, 4);
+    while (words.length < 4) words.push('');
 
-// fastify-formbody lets us parse incoming forms
-fastify.register(require("@fastify/formbody"));
+    try {
+        // Create a virtual DOM
+        const dom = new JSDOM(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <style>
+                @font-face { font-family: Turtles; src: url(Turtles.ttf); }
+                body { margin: 0; padding: 0; text-align: center; background: transparent; }
+                #logo { display: inline-block; padding: 20px; background: transparent; }
+                #turtles { font-family: Turtles; font-size: 120px; color: rgb(156,203,64);
+                           text-shadow: -6px -6px 0 #000, 6px -6px 0 #000, -6px 6px 0 #000, 6px 6px 0 #000;
+                           display: inline-block; }
+                #teenageMutantNinja { color: white; text-transform: uppercase; font-weight: bold;
+                                      font-size: 30px; background-color: red; display: inline-block;
+                                      border: 6px solid black; border-width: 6px 0; line-height: 40px;
+                                      padding: 5px 10px; }
+                #red1, #red2 { background-color: red; display: inline-block; border: 6px solid black;
+                               width: 70px; height: 40px; margin-bottom: -15px; }
+                #red1 { transform: skew(30deg); border-right-width: 0; margin-right: -65px; }
+                #red2 { transform: skew(-30deg); border-left-width: 0; margin-left: -65px; }
+            </style>
+        </head>
+        <body>
+            <div id="logo">
+                <div id="top">
+                    <div id="red1"></div>
+                    <div id="teenageMutantNinja">${words[0]} ${words[1]} ${words[2]}</div>
+                    <div id="red2"></div>
+                </div>
+                <div id="turtles">${words[3]}</div>
+            </div>
+        </body>
+        </html>`, { runScripts: "dangerously" });
 
-// point-of-view is a templating manager for fastify
-fastify.register(require("@fastify/view"), {
-  engine: {
-    handlebars: require("handlebars"),
-  },
-});
+        const window = dom.window;
+        const document = window.document;
 
-// Our main GET home page route, pulls from src/pages/index.hbs
-fastify.get("/", function (request, reply) {
-  // params is an object we'll pass to our handlebars template
-  let params = {
-    greeting: "Hello Node!",
-  };
-  // request.query.paramName <-- a querystring example
-  return reply.view("/src/pages/index.hbs", params);
-});
+        // Wait for all content to load before rendering the canvas
+        await new Promise((resolve) => {
+            setTimeout(resolve, 500); // Adding a small delay to let the content render
+        });
 
-// A POST route to handle form submissions
-fastify.post("/", function (request, reply) {
-  let params = {
-    greeting: "Hello Form!",
-  };
-  // request.body.paramName <-- a form post example
-  return reply.view("/src/pages/index.hbs", params);
-});
+        // Generate the canvas using html2canvas
+        const canvas = await html2canvas(document.querySelector("#logo"));
+        const imageBuffer = canvas.toBuffer("image/png");
 
-// Run the server and report out to the logs
-fastify.listen(
-  { port: process.env.PORT, host: "0.0.0.0" },
-  function (err, address) {
-    if (err) {
-      console.error(err);
-      process.exit(1);
+        res.writeHead(200, { 'Content-Type': 'image/png' });
+        res.end(imageBuffer, 'binary');
+    } catch (error) {
+        console.error('Error generating image:', error);
+        res.status(500).send('Error generating image');
     }
-    console.log(`Your app is listening on ${address}`);
-  }
-);
+});
+
+app.listen(PORT, () => {
+    console.log(`Server running at http://localhost:${PORT}`);
+});
