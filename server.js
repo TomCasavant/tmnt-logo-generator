@@ -95,29 +95,27 @@ app.get('/img', (req, res) => {
     const words = text.split(' ');
 
     const topWords = words.slice(0, 3).join(' '); // First three words
-    const bottomWord = words.slice(3).join(' '); // Last word
+    const bottomWord = words.slice(3).join(' '); // Remaining words
   
-    let numLettersTopWords = topWords.length; // Remove spaces
-    const bottomLettersLength = bottomWord.length;
+    // Calculate letter count for words
+    const numLettersTopWords = topWords.replace(/\s+/g, '').length; // Remove spaces for count
+    const bottomLettersLength = bottomWord.replace(/\s+/g, '').length; // Remove spaces for bottom word
 
-    const widthTopWords = 32.5 * numLettersTopWords; // Calculate width based on top words
-    const widthBottomWords = 75 * bottomLettersLength; // Calculate width based on bottom words
+    // Calculate widths based on letter counts
+    const baseWidth = 30;
+    const widthTopWords = baseWidth * numLettersTopWords;
+    const widthBottomWords = 86 * bottomLettersLength;
 
-    // Choose the larger value
+    // Choose the larger width
     const width = Math.max(widthTopWords, widthBottomWords);
 
-    
     const canvas = createCanvas(width, 200);
     const ctx = canvas.getContext('2d');
-  
-    numLettersTopWords = topWords.replace(/\s+/g, '').length; // Remove spaces
 
-    // Calculate trapezoid width based on the number of letters in the first 3 words
-    const baseWidth = 30; // Width per letter
-    
+    // Trapezoid width and position
     const trapezoidWidth = baseWidth * numLettersTopWords;
-    const trapezoidStart = 40 + ((bottomLettersLength-7) * 30)
-    const trapezoidEnd = trapezoidWidth + ((bottomLettersLength-7) * 36)
+    const trapezoidStart = 60 + ((bottomLettersLength - 7) * 30);  // Adjust for bottom word length
+    const trapezoidEnd = 30 + trapezoidWidth + ((bottomLettersLength - 7) * 36); // Adjust for bottom word length
 
     // Background
     ctx.fillStyle = 'transparent';
@@ -128,37 +126,32 @@ app.get('/img', (req, res) => {
     ctx.lineWidth = 6;
     ctx.beginPath();
     ctx.moveTo(trapezoidStart, 10);
-    ctx.lineTo(trapezoidEnd, 10); // Adjust the top width
-    ctx.lineTo(trapezoidEnd-35, 60); // Adjust the bottom width based on trapezoidWidth
-    ctx.lineTo(trapezoidStart+35, 60); // Bottom left corner
+    ctx.lineTo(trapezoidEnd, 10);
+    ctx.lineTo(trapezoidEnd - 35, 60);
+    ctx.lineTo(trapezoidStart + 35, 60);
     ctx.closePath();
     ctx.fill();
     ctx.strokeStyle = 'black';
     ctx.stroke();
 
-
     // Skewed Top Words
-    ctx.fillStyle = 'white'; // Sets text color
-    ctx.font = 'bold 30px Futura, Helvetica, Verdana, sans-serif'; // Font size, weight, and family
-    ctx.textAlign = 'center'; // Centers text horizontally
-    ctx.textBaseline = 'middle'; // Centers text vertically
-
-    skewLetters(ctx, topWords, trapezoidStart+45, 35, 35, -35, 22, 15);
+    ctx.fillStyle = 'white';
+    ctx.font = 'bold 30px Futura, Helvetica, Verdana, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    skewLetters(ctx, topWords, trapezoidStart + 45, 35, 35, -35, 22, 15);
 
     // Rotated Bottom Word
     ctx.fillStyle = '#8FD129';
-    //(ctx, text, centerX, centerY, startAngle, endAngle, radius)
-   //  rotateLetters(text, startAngle, endAngle, makeArc
-    // rotateLetters(turtles, -30, 30, true)
     ctx.font = '125px Turtles';
     ctx.strokeStyle = 'black';
     ctx.lineWidth = 5;
-  
-    rotateLetters(ctx, bottomWord, trapezoidStart+trapezoidWidth-370, 94, -30, 30, 270, true);
+    rotateLetters(ctx, bottomWord, trapezoidStart + trapezoidWidth / 3.5 - 15, 94, -30, 30, 270, true);
 
     res.setHeader('Content-Type', 'image/png');
     canvas.pngStream().pipe(res);
 });
+
 
 // Start the server
 const port = 3000;
